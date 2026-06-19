@@ -1,16 +1,3 @@
-export async function generateStaticParams() {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/vehicles/?page_size=100`
-    )
-    const data = await res.json()
-    return (data.results || []).map((v: { id: number }) => ({
-      id: String(v.id),
-    }))
-  } catch {
-    return []
-  }
-}
 import VehicleDetailPage from './client'
 
 // IDs are only known at request time (fetched client-side from the external API).
