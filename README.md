@@ -41,6 +41,6 @@ npm run dev
 3. Build command : `npm run build`
 4. Publish directory : `out`
 5. Ajoutez la variable d'environnement :
-   - `NEXT_PUBLIC_API_URL` = `https://votre-app.pythonanywhere.com/api`
+   - `NEXT_PUBLIC_API_URL` = `https://motorsss-superwebman.pythonanywhere.com/api`
 
 Le fichier `netlify.toml` est déjà configuré.
