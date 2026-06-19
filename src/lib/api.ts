@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://votre-app.pythonanywhere.com/api'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://motorsss-superwebman.pythonanywhere.com/api'
 
 export const api = axios.create({
   baseURL: API_URL,
