@@ -7,7 +7,12 @@ import { useState } from 'react'
 import { Gauge, Fuel, Calendar, Palette, CheckCircle, Shield, Wrench, Car } from 'lucide-react'
 
 export default function VehicleDetailPage() {
-  const { id } = useParams()
+  const params = useParams()
+  const id = params?.id && params.id !== 'placeholder' 
+  ? params.id 
+  : typeof window !== 'undefined' 
+    ? window.location.pathname.split('/').filter(Boolean).pop() 
+    : null
   const { user } = useAuth()
   const router = useRouter()
   const [imgIdx, setImgIdx] = useState(0)
@@ -23,8 +28,9 @@ export default function VehicleDetailPage() {
       <div className="aspect-video bg-gray-200 rounded-xl mb-6" />
     </div>
   )
-
-  if (!vehicle) return <div className="text-center py-20">Véhicule introuvable</div>
+    
+  if (!id) return null
+    if (!vehicle && !isLoading) return <div className="text-center py-20">Véhicule introuvable</div>
 
   const handleDeposerDossier = () => {
     if (!user) {
