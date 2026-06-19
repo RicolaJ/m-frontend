@@ -3,10 +3,10 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { vehiclesAPI, dossiersAPI } from '@/lib/api'
 import { useAuth } from '@/hooks/useAuth'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { CheckCircle } from 'lucide-react'
 
-export default function NouveauDossierPage() {
+function NouveauDossierForm() {
   const searchParams = useSearchParams()
   const vehicleId = searchParams.get('vehicleId')
   const type = searchParams.get('type') || 'achat'
@@ -135,5 +135,13 @@ export default function NouveauDossierPage() {
         {mutation.isPending ? 'Envoi en cours...' : 'Soumettre mon dossier'}
       </button>
     </div>
+  )
+}
+
+export default function NouveauDossierPage() {
+  return (
+    <Suspense fallback={<div className="max-w-2xl mx-auto px-4 py-10 animate-pulse"><div className="card h-40" /></div>}>
+      <NouveauDossierForm />
+    </Suspense>
   )
 }
