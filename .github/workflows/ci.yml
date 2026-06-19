@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NEXT_PUBLIC_API_URL: https://votre-app.pythonanywhere.com/api
-
+      NEXT_PUBLIC_API_URL: https://motorsss-superwebman.pythonanywhere.com/api
     steps:
       - uses: actions/checkout@v4
 
