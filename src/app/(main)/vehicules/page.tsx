@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { vehiclesAPI } from '@/lib/api'
 import { VehicleCard } from '@/components/vehicles/VehicleCard'
@@ -7,7 +7,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { Search, SlidersHorizontal } from 'lucide-react'
 import { Vehicle } from '@/types'
 
-export default function VehiculesPage() {
+function VehiculesContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const typeParam = searchParams.get('type') || ''
@@ -110,5 +110,13 @@ export default function VehiculesPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function VehiculesPage() {
+  return (
+    <Suspense>
+      <VehiculesContent />
+    </Suspense>
   )
 }

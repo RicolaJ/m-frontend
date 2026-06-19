@@ -1,17 +1,9 @@
 [build]
   command = "npm run build"
-  publish = "out"
 
 [build.environment]
   NODE_VERSION = "20"
   NEXT_PUBLIC_API_URL = "https://votre-app.pythonanywhere.com/api"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-[[headers]]
-  for = "/api/*"
-  [headers.values]
-    Access-Control-Allow-Origin = "*"
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

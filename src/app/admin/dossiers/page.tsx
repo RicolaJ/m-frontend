@@ -2,13 +2,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { dossiersAPI } from '@/lib/api'
 import { useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { CheckCircle, XCircle, Eye } from 'lucide-react'
 
 const STATUTS = ['', 'en_attente', 'en_cours', 'valide', 'refuse']
 
-export default function AdminDossiersPage() {
+function AdminDossiersContent() {
   const searchParams = useSearchParams()
   const statut = searchParams.get('statut') || ''
   const queryClient = useQueryClient()
@@ -151,5 +151,13 @@ export default function AdminDossiersPage() {
         </table>
       </div>
     </div>
+  )
+}
+
+export default function AdminDossiersPage() {
+  return (
+    <Suspense>
+      <AdminDossiersContent />
+    </Suspense>
   )
 }
