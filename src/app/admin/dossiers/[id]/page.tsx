@@ -1,6 +1,3 @@
-export async function generateStaticParams() {
-  return []
-}
 import AdminDossierDetailPage from './client'
 
 // IDs are only known at request time (fetched client-side from the external API).
