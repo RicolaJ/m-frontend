@@ -6,8 +6,7 @@ const nextConfig = {
     unoptimized: true,
   },
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://votre-app.pythonanywhere.com/api',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://motorsss-superwebman.pythonanywhere.com/api',
   },
 }
-
 module.exports = nextConfig
