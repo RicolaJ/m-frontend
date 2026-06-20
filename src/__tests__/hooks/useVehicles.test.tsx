@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode } from 'react'
 import { useVehicles, useVehicle } from '@/hooks/useVehicles'
-import { http, HttpResponse } from 'msw'
+import { rest } from 'msw'
 import { server } from '@/mocks/server'
 import { mockVehicle, mockVehicleLocation } from '@/mocks/handlers'
 
@@ -51,8 +51,8 @@ describe('useVehicles', () => {
 
   it('gère les erreurs réseau', async () => {
     server.use(
-      http.get(`${API_URL}/vehicles/`, () => {
-        return HttpResponse.error()
+      rest.get(`${API_URL}/vehicles/`, (req, res, ctx) => {
+        return res(ctx.status(500))
       })
     )
     const { result } = renderHook(() => useVehicles(), { wrapper: createWrapper() })

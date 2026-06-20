@@ -6,7 +6,7 @@ const createJestConfig = nextJest({ dir: './' })
 const config: Config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
-  setupFilesAfterFramework: ['<rootDir>/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
@@ -16,7 +16,7 @@ const config: Config = {
     '!src/app/layout.tsx',
     '!src/app/globals.css',
   ],
-  testPathPattern: ['<rootDir>/src/__tests__/**/*.test.{ts,tsx}'],
+  testMatch: ['<rootDir>/src/__tests__/**/*.test.{ts,tsx}'],
 }
 
 export default createJestConfig(config)

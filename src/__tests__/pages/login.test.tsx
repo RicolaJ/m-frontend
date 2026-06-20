@@ -1,5 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import LoginPage from '@/app/(auth)/login/page'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from '@/hooks/useAuth'
@@ -46,9 +45,11 @@ describe('LoginPage', () => {
 
   it('affiche une erreur si identifiants incorrects', async () => {
     render(<LoginPage />, { wrapper: Wrapper })
-    await userEvent.type(screen.getByPlaceholderText(/vous@email\.com/i), 'wrong@test.fr')
-    await userEvent.type(screen.getByPlaceholderText(/••••••••/i), 'wrongpass')
-    fireEvent.click(screen.getByRole('button', { name: /se connecter/i }))
+    await act(async () => {
+      fireEvent.change(screen.getByPlaceholderText(/vous@email\.com/i), { target: { value: 'wrong@test.fr' } })
+      fireEvent.change(screen.getByPlaceholderText(/••••••••/i), { target: { value: 'wrongpass' } })
+      fireEvent.click(screen.getByRole('button', { name: /se connecter/i }))
+    })
     await waitFor(() => {
       expect(screen.getByText(/email ou mot de passe incorrect/i)).toBeInTheDocument()
     })
@@ -57,19 +58,22 @@ describe('LoginPage', () => {
   it('redirige après connexion réussie', async () => {
     ;(Cookies.get as jest.Mock).mockReturnValue('fake-access-token')
     render(<LoginPage />, { wrapper: Wrapper })
-    await userEvent.type(screen.getByPlaceholderText(/vous@email\.com/i), 'client@test.fr')
-    await userEvent.type(screen.getByPlaceholderText(/••••••••/i), 'Pass123!')
-    fireEvent.click(screen.getByRole('button', { name: /se connecter/i }))
+    await act(async () => {
+      fireEvent.change(screen.getByPlaceholderText(/vous@email\.com/i), { target: { value: 'client@test.fr' } })
+      fireEvent.change(screen.getByPlaceholderText(/••••••••/i), { target: { value: 'Pass123!' } })
+      fireEvent.click(screen.getByRole('button', { name: /se connecter/i }))
+    })
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/espace-client/dossiers')
     })
   })
 
-  it('désactive le bouton pendant le chargement', async () => {
-    render(<LoginPage />, { wrapper: Wrapper })
-    await userEvent.type(screen.getByPlaceholderText(/vous@email\.com/i), 'client@test.fr')
-    await userEvent.type(screen.getByPlaceholderText(/••••••••/i), 'Pass123!')
-    fireEvent.click(screen.getByRole('button', { name: /se connecter/i }))
-    expect(screen.getByRole('button', { name: /connexion\.\.\./i })).toBeDisabled()
-  })
+it('désactive le bouton pendant le chargement', async () => {
+  render(<LoginPage />, { wrapper: Wrapper })
+  fireEvent.change(screen.getByPlaceholderText(/vous@email\.com/i), { target: { value: 'client@test.fr' } })
+  fireEvent.change(screen.getByPlaceholderText(/••••••••/i), { target: { value: 'Pass123!' } })
+  fireEvent.click(screen.getByRole('button', { name: /se connecter/i }))
+  // Vérifier immédiatement sans await act
+  expect(screen.getByRole('button', { name: /connexion\.\.\./i })).toBeDisabled()
+})
 })
