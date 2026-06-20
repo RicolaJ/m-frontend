@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from '@/hooks/useAuth'
 import { ReactNode } from 'react'
 import Cookies from 'js-cookie'
-import { http, HttpResponse } from 'msw'
+import { rest } from 'msw'
 import { server } from '@/mocks/server'
 
 jest.mock('next/link', () => ({
@@ -70,11 +70,11 @@ describe('DossiersPage', () => {
     })
 
     it('affiche un message si aucun dossier', async () => {
-      server.use(
-        http.get(`${API_URL}/dossiers/`, () => {
-          return HttpResponse.json({ count: 0, results: [], next: null, previous: null })
-        })
-      )
+server.use(
+  rest.get(`${API_URL}/dossiers/`, (req, res, ctx) => {
+    return res(ctx.json({ count: 0, results: [], next: null, previous: null }))
+  })
+)
       render(<DossiersPage />, { wrapper: Wrapper })
       await waitFor(() => {
         expect(screen.getByText(/aucun dossier en cours/i)).toBeInTheDocument()

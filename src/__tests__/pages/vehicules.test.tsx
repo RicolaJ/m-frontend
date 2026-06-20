@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import VehiculesPage from '@/app/(main)/vehicules/page'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode } from 'react'
-import { http, HttpResponse } from 'msw'
+import { rest } from 'msw'
 import { server } from '@/mocks/server'
 
 jest.mock('next/link', () => ({
@@ -51,11 +51,11 @@ describe('VehiculesPage', () => {
   })
 
   it('affiche un message si aucun véhicule trouvé', async () => {
-    server.use(
-      http.get(`${API_URL}/vehicles/`, () => {
-        return HttpResponse.json({ count: 0, results: [], next: null, previous: null })
-      })
-    )
+server.use(
+  rest.get(`${API_URL}/vehicles/`, (req, res, ctx) => {
+    return res(ctx.json({ count: 0, results: [], next: null, previous: null }))
+  })
+)
     render(<VehiculesPage />, { wrapper: Wrapper })
     await waitFor(() => {
       expect(screen.getByText(/aucun véhicule trouvé/i)).toBeInTheDocument()

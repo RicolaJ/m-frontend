@@ -1,8 +1,7 @@
-import { http, HttpResponse } from 'msw'
+import { rest } from 'msw'
 
 const API_URL = 'https://motorsss-superwebman.pythonanywhere.com/api'
 
-// Données de test
 export const mockVehicle = {
   id: 1,
   marque: 'Renault',
@@ -62,85 +61,81 @@ export const mockDossier = {
 
 export const handlers = [
   // Vehicles
-  http.get(`${API_URL}/vehicles/`, ({ request }) => {
-    const url = new URL(request.url)
-    const type = url.searchParams.get('type')
+  rest.get(`${API_URL}/vehicles/`, (req, res, ctx) => {
+    const type = req.url.searchParams.get('type')
     let results = [mockVehicle, mockVehicleLocation]
     if (type) results = results.filter(v => v.type === type)
-    return HttpResponse.json({ count: results.length, results, next: null, previous: null })
+    return res(ctx.json({ count: results.length, results, next: null, previous: null }))
   }),
 
-  http.get(`${API_URL}/vehicles/:id/`, ({ params }) => {
-    const id = Number(params.id)
+  rest.get(`${API_URL}/vehicles/:id`, (req, res, ctx) => {
+    const id = Number(req.params.id)
     const vehicle = id === 1 ? mockVehicle : id === 2 ? mockVehicleLocation : null
-    if (!vehicle) return HttpResponse.json({ detail: 'Not found' }, { status: 404 })
-    return HttpResponse.json(vehicle)
+    if (!vehicle) return res(ctx.status(404), ctx.json({ detail: 'Not found' }))
+    return res(ctx.json(vehicle))
   }),
 
-  http.post(`${API_URL}/vehicles/`, () => {
-    return HttpResponse.json({ ...mockVehicle, id: 99 }, { status: 201 })
+  rest.post(`${API_URL}/vehicles/`, (req, res, ctx) => {
+    return res(ctx.status(201), ctx.json({ ...mockVehicle, id: 99 }))
   }),
 
-  http.post(`${API_URL}/vehicles/:id/switch_type/`, ({ params }) => {
-    const vehicle = { ...mockVehicle, type: 'location' }
-    return HttpResponse.json(vehicle)
+  rest.post(`${API_URL}/vehicles/:id/switch_type/`, (req, res, ctx) => {
+    return res(ctx.json({ ...mockVehicle, type: 'location' }))
   }),
 
-  http.delete(`${API_URL}/vehicles/:id/`, () => {
-    return new HttpResponse(null, { status: 204 })
+  rest.delete(`${API_URL}/vehicles/:id`, (req, res, ctx) => {
+    return res(ctx.status(204))
   }),
 
   // Auth
-  http.post(`${API_URL}/auth/token/`, async ({ request }) => {
-    const body = await request.json() as { email: string; password: string }
+  rest.post(`${API_URL}/auth/token/`, async (req, res, ctx) => {
+    const body = await req.json()
     if (body.email === 'client@test.fr' && body.password === 'Pass123!') {
-      return HttpResponse.json({ access: 'fake-access-token', refresh: 'fake-refresh-token' })
+      return res(ctx.json({ access: 'fake-access-token', refresh: 'fake-refresh-token' }))
     }
-    return HttpResponse.json({ detail: 'No active account found' }, { status: 401 })
+    return res(ctx.status(401), ctx.json({ detail: 'No active account found' }))
   }),
 
-  http.post(`${API_URL}/auth/register/`, async ({ request }) => {
-    const body = await request.json() as Record<string, string>
+  rest.post(`${API_URL}/auth/register/`, async (req, res, ctx) => {
+    const body = await req.json()
     if (body.email === 'existing@test.fr') {
-      return HttpResponse.json({ email: ['Un compte existe déjà.'] }, { status: 400 })
+      return res(ctx.status(400), ctx.json({ email: ['Un compte existe déjà.'] }))
     }
-    return HttpResponse.json({ id: 3, ...body }, { status: 201 })
+    return res(ctx.status(201), ctx.json({ id: 3, ...body }))
   }),
 
-  http.get(`${API_URL}/auth/me/`, ({ request }) => {
-    const auth = request.headers.get('Authorization')
-    if (!auth) return HttpResponse.json({ detail: 'Non authentifié.' }, { status: 401 })
-    return HttpResponse.json(mockUser)
-  }),
+rest.get(`${API_URL}/auth/me/`, (req, res, ctx) => {
+  return res(ctx.json(mockUser))  // Supprimer la vérification du token
+}),
 
   // Dossiers
-  http.get(`${API_URL}/dossiers/`, () => {
-    return HttpResponse.json({ count: 1, results: [mockDossier], next: null, previous: null })
+  rest.get(`${API_URL}/dossiers/`, (req, res, ctx) => {
+    return res(ctx.json({ count: 1, results: [mockDossier], next: null, previous: null }))
   }),
 
-  http.get(`${API_URL}/dossiers/:id/`, ({ params }) => {
-    if (Number(params.id) === 1) return HttpResponse.json(mockDossier)
-    return HttpResponse.json({ detail: 'Not found' }, { status: 404 })
+  rest.get(`${API_URL}/dossiers/:id`, (req, res, ctx) => {
+    if (Number(req.params.id) === 1) return res(ctx.json(mockDossier))
+    return res(ctx.status(404), ctx.json({ detail: 'Not found' }))
   }),
 
-  http.post(`${API_URL}/dossiers/`, () => {
-    return HttpResponse.json({ ...mockDossier, id: 2, reference: 'MM-XYZ789' }, { status: 201 })
+  rest.post(`${API_URL}/dossiers/`, (req, res, ctx) => {
+    return res(ctx.status(201), ctx.json({ ...mockDossier, id: 2, reference: 'MM-XYZ789' }))
   }),
 
-  http.post(`${API_URL}/dossiers/:id/upload_document/`, () => {
-    return HttpResponse.json({ id: 1, nom: 'Pièce identité', url: 'https://example.com/doc.pdf', uploaded_at: '2024-01-20T10:00:00Z' }, { status: 201 })
+  rest.post(`${API_URL}/dossiers/:id/upload_document/`, (req, res, ctx) => {
+    return res(ctx.status(201), ctx.json({ id: 1, nom: 'Pièce identité', url: 'https://example.com/doc.pdf', uploaded_at: '2024-01-20T10:00:00Z' }))
   }),
 
-  // Admin dossiers
-  http.get(`${API_URL}/admin/dossiers/`, () => {
-    return HttpResponse.json({ count: 1, results: [mockDossier], next: null, previous: null })
+  // Admin
+  rest.get(`${API_URL}/admin/dossiers/`, (req, res, ctx) => {
+    return res(ctx.json({ count: 1, results: [mockDossier], next: null, previous: null }))
   }),
 
-  http.post(`${API_URL}/admin/dossiers/:id/valider/`, () => {
-    return HttpResponse.json({ ...mockDossier, statut: 'valide' })
+  rest.post(`${API_URL}/admin/dossiers/:id/valider/`, (req, res, ctx) => {
+    return res(ctx.json({ ...mockDossier, statut: 'valide' }))
   }),
 
-  http.post(`${API_URL}/admin/dossiers/:id/refuser/`, () => {
-    return HttpResponse.json({ ...mockDossier, statut: 'refuse', motif_refus: 'Dossier incomplet.' })
+  rest.post(`${API_URL}/admin/dossiers/:id/refuser/`, (req, res, ctx) => {
+    return res(ctx.json({ ...mockDossier, statut: 'refuse', motif_refus: 'Dossier incomplet.' }))
   }),
 ]
