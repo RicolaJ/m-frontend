@@ -3,13 +3,19 @@ import { Inter, Syne } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/hooks/useAuth'
 import { QueryProvider } from '@/components/layout/QueryProvider'
+import * as Sentry from '@sentry/nextjs'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const syne = Syne({ subsets: ['latin'], variable: '--font-syne' })
 
-export const metadata: Metadata = {
-  title: 'M-Motors | Achat & Location de véhicules d\'occasion',
-  description: 'Trouvez votre véhicule idéal : achat ou location longue durée avec option d\'achat.',
+export function generateMetadata(): Metadata {
+  return {
+    title: 'M-Motors | Achat & Location de véhicules d\'occasion',
+    description: 'Trouvez votre véhicule idéal : achat ou location longue durée avec option d\'achat.',
+    other: {
+      ...Sentry.getTraceData()
+    }
+  }
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
