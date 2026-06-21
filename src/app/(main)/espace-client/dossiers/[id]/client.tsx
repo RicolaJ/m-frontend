@@ -42,7 +42,7 @@ const id = typeof window !== 'undefined' && (rawId === 'placeholder' || !rawId)
   const { data: dossier, isLoading } = useQuery({
   queryKey: ['dossier', id],
   queryFn: () => dossiersAPI.get(Number(id)).then(r => r.data),
-  enabled: !!user && !!id && id !== 'placeholder',
+  enabled: !!user && !!id && id !== 'placeholder' && !isNaN(Number(id)),
 })
 
   const uploadMutation = useMutation({
