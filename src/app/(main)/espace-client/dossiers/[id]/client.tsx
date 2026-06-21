@@ -23,7 +23,10 @@ const DOCUMENTS_REQUIS = [
 ]
 
 export default function DossierDetailPage() {
-  const { id } = useParams()
+  const params = useParams()
+  const id = typeof window !== 'undefined'
+  ? window.location.pathname.split('/').filter(Boolean).pop()
+  : params?.id
   const { user, loading } = useAuth()
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -36,10 +39,10 @@ export default function DossierDetailPage() {
   }, [user, loading])
 
   const { data: dossier, isLoading } = useQuery({
-    queryKey: ['dossier', id],
-    queryFn: () => dossiersAPI.get(Number(id)).then(r => r.data),
-    enabled: !!user,
-  })
+  queryKey: ['dossier', id],
+  queryFn: () => dossiersAPI.get(Number(id)).then(r => r.data),
+  enabled: !!user && !!id && id !== 'placeholder',
+})
 
   const uploadMutation = useMutation({
     mutationFn: ({ file, nom }: { file: File; nom: string }) =>
