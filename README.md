@@ -295,7 +295,28 @@ Le frontend communique avec le backend Django via une API REST JWT.
 | `POST /vehicles/{id}/switch_type/` | Basculer achat↔location (admin) |
 
 ---
+## Monitoring — Sentry
 
+Le frontend est connecté à **Sentry** pour la surveillance des erreurs en production.
+
+### Ce que Sentry capture
+- Erreurs JavaScript non gérées
+- Erreurs dans les composants React
+- Performance des pages (temps de chargement)
+- Replay vidéo des sessions utilisateur lors d'une erreur
+
+### Configuration
+Le SDK Sentry est initialisé dans `sentry.client.config.ts` et `sentry.server.config.ts`.
+
+La variable d'environnement requise :
+```env
+SENTRY_AUTH_TOKEN=votre-token-sentry
+```
+
+À ajouter sur **Netlify → Site settings → Environment variables** (en secret).
+
+### Tester
+Visitez `/sentry-example-page` sur le site déployé et cliquez **Throw error** pour déclencher une erreur de test visible dans le dashboard Sentry.
 ## Auteur
 
 Projet réalisé dans le cadre du **Bloc 3 — Développement Python**  
