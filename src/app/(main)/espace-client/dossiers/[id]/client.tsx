@@ -23,10 +23,11 @@ const DOCUMENTS_REQUIS = [
 ]
 
 export default function DossierDetailPage() {
-  const params = useParams()
-  const id = typeof window !== 'undefined'
-  ? window.location.pathname.split('/').filter(Boolean).pop()
-  : params?.id
+const params = useParams()
+const rawId = params?.id
+const id = typeof window !== 'undefined' && (rawId === 'placeholder' || !rawId)
+  ? window.location.pathname.split('/').filter(Boolean).find(segment => !isNaN(Number(segment)))
+  : rawId
   const { user, loading } = useAuth()
   const router = useRouter()
   const queryClient = useQueryClient()
