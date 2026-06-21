@@ -76,8 +76,8 @@ export const dossiersAPI = {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
   },
-  validate: (id: number) => api.post(`/dossiers/${id}/valider/`),
-  refuse: (id: number, motif: string) => api.post(`/dossiers/${id}/refuser/`, { motif }),
+validate: (id: number) => api.post(`/admin/dossiers/${id}/valider/`),
+refuse: (id: number, motif: string) => api.post(`/admin/dossiers/${id}/refuser/`, { motif }),
   // Admin
   adminList: (params?: Record<string, string>) => api.get('/admin/dossiers/', { params }),
 }
